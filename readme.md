@@ -9,10 +9,10 @@ uses modified https://github.com/SpotlightKid/micropython-osc
 3. use the Routes to control the Brick
 
 # Routes:
-Placeholder can be:
+Placeholders can be:
 - `ID` for `IP-Address` or `Name`  
 - `PORT` for `a`, `b`, `c`, `d`, `s1`, `s2`, `s3` or `s4` 
-- `PORTs` for a group of `PORT`, e.g. `ab`, `bcd`  
+- `PORTs` for a `PORTS` or a group of `PORT`, e.g. `a`, `ab`, `bcd`  
 - `MOTOR_ACTION` for `coast`, `hold` or `brake`
 
 ## Debugging
@@ -51,9 +51,11 @@ Received OSC can be logged with
 
 ## Light
 - `/ID/light [color as string]`  
-  sets the brick lights color. Possible colors are `black`, `blue`, `green`, `yellow`, `red`, `white`, `brown`, `orange` or `purple`
+  sets the brick lights color. Possible colors are `black`, `blue`, `green`, `yellow`, `red`, `white`, `brown`, `orange` or `purple`  
+  Example: `/brick/light yellow` -> buttons glow yellow
 - `/ID/light/off`  
-  disables the brick lights
+  disables the brick lights  
+  Example: `/brick/light/off` -> buttons stop glowing
 
 
 ## Beep  
@@ -74,15 +76,20 @@ Received OSC can be logged with
 ## TtS
 Can only say one text at a time and breaks both if trying to say another, while already speaking
 - `/ID/say [word as string]`  
-  lets the brick beep with the default tone and duration
+  lets the brick beep with the default tone and duration  
+  Example: `/brick/say hello` -> says `hello` 
 - `/ID/say/language [language as string]`  
-  sets the speaker language. see [here ](https://pybricks.com/ev3-micropython/hubs.html#pybricks.hubs.EV3Brick.speaker.set_speech_options) for available ones 
+  sets the speaker language. see [here ](https://pybricks.com/ev3-micropython/hubs.html#pybricks.hubs.EV3Brick.speaker.set_speech_options) for available ones  
+  Example: `/brick/say/language it` -> italian pronunciation
 - `/ID/say/voice [voice as string]`  
-  sets the speaker voice. see [here ](https://pybricks.com/ev3-micropython/hubs.html#pybricks.hubs.EV3Brick.speaker.set_speech_options) for available ones 
+  sets the speaker voice. see [here ](https://pybricks.com/ev3-micropython/hubs.html#pybricks.hubs.EV3Brick.speaker.set_speech_options) for available ones  
+  Example: `/brick/say/voice m3` -> a male voice
 - `/ID/say/speed [speed as int]`  
-  sets the speaker speed in words per minute
+  sets the speaker speed in words per minute  
+  Example: `/brick/say/speed 50` -> 50 word per minute
 - `/ID/say/pitch [pitch as int]`  
-  sets the speakers pitch from 0 to 99
+  sets the speakers pitch from 0 to 99  
+  Example: `/brick/say/pitch 50` -> 99 high pitch voice 
 - `/ID/say/volume [percentage as int]`  
   sets the brick speech volume to the given percentage  
   Example: `/brick/say/volume 50` -> 50% volume
@@ -93,6 +100,8 @@ Can only say one text at a time and breaks both if trying to say another, while 
 
 ## Motor  
 - `/ID/motor/PORTs/stop`
+  Stops the motor at PORTs
+  Example: `/brick/a/stop` -> motor at port a stops and runs out
 - `/ID/motor/PORTs/brake`
 - `/ID/motor/PORTs/hold`
 - `/ID/motor/PORTs/angle` -> sends `/ID/motor/PORT/angle/at [int]`
