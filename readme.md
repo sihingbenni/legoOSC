@@ -11,7 +11,8 @@ uses modified https://github.com/SpotlightKid/micropython-osc
 # Routes:
 Placeholder can be:
 - `ID` for `IP-Address` or `Name`  
-- `PORT` for `a`, `b`, `c`, `d`, `s1`, `s2`, `s3` or `s4`  
+- `PORT` for `a`, `b`, `c`, `d`, `s1`, `s2`, `s3` or `s4` 
+- `PORTs` for a group of `PORT`, e.g. `ab`, `bcd`  
 - `MOTOR_ACTION` for `coast`, `hold` or `brake`
 
 ## Debugging
@@ -50,7 +51,7 @@ Received OSC can be logged with
 
 ## Light
 - `/ID/light [color as string]`  
-  sets the brick lights color. Possible colors are black, blue, green, yellow, red, white, brown, orange or purple
+  sets the brick lights color. Possible colors are `black`, `blue`, `green`, `yellow`, `red`, `white`, `brown`, `orange` or `purple`
 - `/ID/light/off`  
   disables the brick lights
 
@@ -70,7 +71,7 @@ Received OSC can be logged with
   Example: `/brick/beep/volume 50` -> 50% volume
 
 
-# TtS
+## TtS
 Can only say one text at a time and breaks both if trying to say another, while already speaking
 - `/ID/say [word as string]`  
   lets the brick beep with the default tone and duration
@@ -86,7 +87,7 @@ Can only say one text at a time and breaks both if trying to say another, while 
   sets the brick speech volume to the given percentage  
   Example: `/brick/say/volume 50` -> 50% volume
 
-# Music
+## Music
 
 
 
