@@ -32,6 +32,12 @@ Received OSC can be logged with
 
 
 ## Config 
+Can be used to save the 
+
+1. name
+
+of the brick
+
 - `/ID/config/save`  
   saves the current configuration to the brick for future starts
 - `/ID/config/load`  
@@ -99,38 +105,92 @@ Can only say one text at a time and breaks both if trying to say another, while 
 
 
 ## Motor  
-- `/ID/motor/PORTs/stop`
-  Stops the motor at PORTs
-  Example: `/brick/a/stop` -> motor at port a stops and runs out
-- `/ID/motor/PORTs/brake`
-- `/ID/motor/PORTs/hold`
-- `/ID/motor/PORTs/angle` -> sends `/ID/motor/PORT/angle/at [int]`
-- `/ID/motor/PORTs/angle [int]` -> sends `/ID/motor/PORT/angle/at [int]`
-- `/ID/motor/PORTs/run [int]`
-- `/ID/motor/PORTs/run/until_stalled [int]` -> sends `/ID/motor/PORT/stalled [int]`
-- `/ID/motor/PORTs/run/until_stalled [int, MOTOR_ACTION, int]` -> sends `/ID/motor/PORT/stalled [int]`
-- `/ID/motor/PORTs/run/target [int, int]` -> sends `/ID/motor/PORT/reached/target [int]`
-- `/ID/motor/PORTs/run/target [int, int, MOTOR_ACTION]` -> sends `/ID/motor/PORT/reached/target [int]`
-- `/ID/motor/PORTs/multirun/target [int, ints]` -> sends per `/ID/motor/PORT/reached/target [int]`
-- `/ID/motor/PORTs/multirun/target [int, ints, MOTOR_ACTION]` -> sends per `/ID/motor/PORT/reached/target [int]`
+- `/ID/motor/PORTs/stop`  
+  stops the motor at PORTs  
+  Example: `/brick/motor/a/stop` -> motor at port a stops and runs out
+- `/ID/motor/PORTs/brake`  
+  stops and brakes the motor at PORTs  
+  Example: `/brick/motor/a/brake` -> motor at port a stops and brakes  
+- `/ID/motor/PORTs/hold`  
+  holds the motor at PORTs  
+  Example: `/brick/motor/a/hold` -> motor at port a holds the current position
+- `/ID/motor/PORTs/angle` -> sends `/ID/motor/PORT/angle/at [angle as int]`  
+  returns the current angle of the motor at the given PORTs. Angle can be a negative or positive integer  
+  Example: `/brick/motor/a/angle` -> sends `/brick/motor/a/angle/at 271` motor at port a is at 271°
+- `/ID/motor/PORTs/angle [angle as int]` -> sends `/ID/motor/PORT/angle/at [angle as int]`  
+  sets the current angle of the motor at the given PORTs to the given number. Angle can be a negative or positive integer  
+  Example: `/brick/motor/a/angle 90` -> sends `/brick/motor/a/angle/at 90` the motor at port a is set to 90°
+- `/ID/motor/PORTs/run [speed as int]`  
+  runs the motor at PORTs with the given speed. Speed can be a negative or positive integer  
+  Example: `/brick/motor/a/run 100` -> motor at port a runs with speed 100
+- `/ID/motor/PORTs/run/until_stalled [speed as int]` -> sends `/ID/motor/PORT/stalled [angle as int]`  
+  runs the motor at PORTs with the given speed until blocked and sends the angle it has been stalled. Speed can be a negative or positive integer  
+  Example: `/brick/motor/a/run/until_stalled 100` -> `/brick/motor/a/stalled 773` motor at port a ran with speed 100 until it is blocked at 773°
+- `/ID/motor/PORTs/run/until_stalled [speed as int, MOTOR_ACTION as string, power as int]` -> sends `/ID/motor/PORT/stalled [int]`  
+  runs the motor at PORTs with the given speed until blocked and sends the angle it has been stalled.  
+  - Speed can be a negative or positive integer  
+  - MOTOR_ACTION defines how the robot should behave after stalling
+  - power is the percentage of the motor torque. 0 to 100
+  
+  Example: `/brick/motor/a/run/until_stalled 100 hold 25` -> `/brick/motor/a/stalled 773` motor at port a ran with speed 100 and 25% torque until it is blocked at 773° and holds its position there
+- `/ID/motor/PORTs/run/target [speed as int, angle as int]` -> sends `/ID/motor/PORT/reached/target [angle as int]`  
+  runs the motor at PORTs with the given speed to the given angle. Speed and angle can be a negative or positive integer and is in relation to the given angle  
+  Example: 
+  - `/brick/motor/a/run/target 100 1000` -> `/brick/motor/a/reached/target 1000` motor at port a runs with speed 100 until it reaches 1000°
+  - `/brick/motor/a/run/target 250 -300` -> `/brick/motor/a/reached/target -300` motor at port a runs with speed -250 until it reaches -300°
+- `/ID/motor/PORTs/run/target [speed as int, angle as int, MOTOR_ACTION as string]` -> sends `/ID/motor/PORT/reached/target [angle as int]`  
+  runs the motor at PORTs with the given speed to the given angle and executes the given MOTOR_ACTION. Speed and angle can be a negative or positive integer and is in relation to the given angle   
+  Example:  
+  - `/brick/motor/a/run/target 100 1000 hold` -> `/brick/motor/a/reached/target 1000` motor at port a runs with speed 100 until it reaches 1000° and holds there   
+  - `/brick/motor/a/run/target 100 -500 hold` -> `/brick/motor/a/reached/target -500` motor at port a runs with speed -100 until it reaches 500° and holds there
+- `/ID/motor/PORTs/multirun/target [int, ints]` -> sends per `/ID/motor/PORT/reached/target [int]`  
+  runs the motor at PORTs with the given speed to the given angle corresponding to the port position. Speed and angles can be a negative or positive integer and is in relation to the given angle    
+  Example: `/brick/motor/ab/run/target 100 1000 -1000` -> `/brick/motor/a/reached/target 1000` and `/brick/motor/b/reached/target -1000`  
+  - motor at port a runs with speed 100 until it reaches 1000°
+  - motor at port b runs with speed -100 until it reaches -1000°
+- `/ID/motor/PORTs/multirun/target [int, ints, MOTOR_ACTION]` -> sends per `/ID/motor/PORT/reached/target [int]`  
+  runs the motor at PORTs with the given speed to the given angle corresponding to the port position. Speed and angles can be a negative or positive integer and is in relation to the given angle    
+  Example: `/brick/motor/ab/run/target 100 1000 -1000 hold` -> `/brick/motor/a/reached/target 1000` and `/brick/motor/b/reached/target -1000`  
+  - motor at port a runs with speed 100 until it reaches 1000° and holds there 
+  - motor at port b runs with speed -100 until it reaches -1000° and holds there
 
 
 ## Colorsensor
-- `/ID/color/PORT` replies with `/ID/color/PORT/is [color as string]`
-- `/ID/color/PORT/ambient` replies with `/ID/color/PORT/ambient/is [percentage as int]`
-- `/ID/color/PORT/reflection` replies with `/ID/color/PORT/reflection/is [percentage as int]`
-- `/ID/color/PORT/rgb` replies with `/ID/light/PORT/rgb/is [r as int, g as int, b as int]`
+- `/ID/color/PORT` replies with `/ID/color/PORT/is [color as string]`  
+  returns the color at PORT. Possible colors are `black`, `blue`, `green`, `yellow`, `red`, `white`, `brown` or `none`  
+  Example: `/brick/color/s1` -> `/brick/color/s1/is white` color is `white`
+- `/ID/color/PORT/ambient` replies with `/ID/color/PORT/ambient/is [percentage as int]`  
+  returns the light intensity at PORT as a percentage  
+  Example: `/brick/color/s1/ambient` -> `/brick/color/s1/ambient/is 40` light-intensity is 40% 
+- `/ID/color/PORT/reflection` replies with `/ID/color/PORT/reflection/is [percentage as int]`  
+  returns the light reflection at PORT as a percentage  
+  Example: `/brick/color/s1/reflection` -> `/brick/color/s1/reflection/is 24` light-reflection is 24% 
+- `/ID/color/PORT/rgb` replies with `/ID/light/PORT/rgb/is [red as int, green as int, blue as int]`  
+  returns the light reflection of red, green and blue light at PORT as a percentage  
+  Example: `/brick/color/s1/rgb` -> `/brick/color/s1/rgb/is 10 90 0` light-reflection of red light is 10%, green light 90% and blue light 0%
 
 
 ##  UltrasonicSensor
-- `/ID/ultrasonic/PORT/distance` replies with `/ID/ultrasonic/PORT/distance/is [distance as int]`
-- `/ID/ultrasonic/PORT/distance/silent` replies with `/ID/ultrasonic/PORT/distance/is [distance as int]`
-- `/ID/ultrasonic/PORT/others` replies with `/ID/ultrasonic/PORT/others/exist [value as boolean]`
+- `/ID/ultrasonic/PORT/distance` replies with `/ID/ultrasonic/PORT/distance/is [distance as int]`  
+  returns the distance at PORT in millimeter. distance is a positive integer  
+  Example: `/brick/ultrasonic/s3/distance` -> `/brick/ultrasonic/s3/distance/is 50` distance to measured object is 50mm 
+- `/ID/ultrasonic/PORT/distance/silent` replies with `/ID/ultrasonic/PORT/distance/is [distance as int]`  
+  returns the distance at PORT in millimeter and disables the sensor afterwards[*](https://pybricks.com/ev3-micropython/ev3devices.html#pybricks.ev3devices.UltrasonicSensor.distance). distance is a positive integer  
+  Example: `/brick/ultrasonic/s3/distance/silent` -> `/brick/ultrasonic/s3/distance/is 50` distance to measured object is 50mm and sensor is disabled
+- `/ID/ultrasonic/PORT/others` replies with `/ID/ultrasonic/PORT/others/exist [value as boolean]`  
+  checks if there are other ultrasonic sensors.  
+  Example: `/brick/ultrasonic/s3/others` -> `/brick/ultrasonic/s3/others/exist true` other sensors exist 
 
 
 ##  TouchSensor
-- `/ID/touch/PORT` replies with `/ID/touch/PORT/pressed [value as bool]`
-- `/ID/touch/PORT/onchange` replies with `/ID/touch/PORT/changed/pressed [value as bool]`
+- `/ID/touch/PORT` replies with `/ID/touch/PORT/pressed [value as bool]`  
+  returns the status at PORT  
+  Example: `/brick/touch/s3` -> `/brick/touch/s3/pressed true` sensor is pressed 
+- `/ID/touch/PORT/onchange` replies with `/ID/touch/PORT/changed/pressed [value as bool]`  
+  sets a listener to relay status changes at PORT  
+  Example: `/brick/touch/s3/onchange` -> `/brick/touch/s3/changed/pressed true` when sensor is pressed and `/brick/touch/s3/changed/pressed false` when sensor is released
 
-##  UltrasonicSensor
-- `/ID/infrared/PORT/distance` replies with `/ID/infrared/PORT/distance/is [distance as int]`
+##  InfraredSensor
+- `/ID/infrared/PORT/distance` replies with `/ID/infrared/PORT/distance/is [distance as int]`  
+  returns the distance at PORT in 0 to 100 percent.  
+  Example: `/brick/infrared/s2/distance` -> `/brick/infrared/s2/distance/is 80` distance is 80%
