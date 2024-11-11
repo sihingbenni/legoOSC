@@ -45,5 +45,3 @@ class OSCServer:
 
     def stop(self):
         self._running = False
-        while not self._stopped: # threads in micropython have no join
-            sleep(0.1)

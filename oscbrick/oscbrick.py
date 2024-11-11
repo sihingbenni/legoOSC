@@ -1,6 +1,6 @@
 from time import sleep
 
-from oscbrick.config import Config
+from oscbrick.config import Config, Topic
 from oscbrick.oscserver import OSCServer
 
 from pybricks.parameters import Button
@@ -14,24 +14,30 @@ FONT = Font(size=19, bold=True)
 
 class OSCBrick:
 
-    oscserver = OSCServer()
+    osc_server = OSCServer()
 
     def __init__(self):
         Config.register(self)
 
         self.show_info()
 
-        self.oscserver.start()
+        self.osc_server.start()
 
         EV3.speaker.beep()
         while Button.CENTER not in EV3.buttons.pressed():
             sleep(0.1)
 
-        self.oscserver.stop()
+        self.osc_server.stop()
         EV3.speaker.beep(frequency=100, duration=500)
 
     def config_changed(self, topic):
         self.show_info()
+        if Topic.PORT == topic:
+            self.osc_server.stop()
+
+            self.osc_server = OSCServer()
+            self.osc_server.start()
+
 
     def show_info(self):
         EV3.screen.clear()

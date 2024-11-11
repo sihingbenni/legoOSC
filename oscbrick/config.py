@@ -34,7 +34,7 @@ class _Config(object):
             try:
                 listener.config_changed(*topic)
             except Exception as e:
-                print("Could not inform listener " + listener + " on config change " + str(topic) + ":" + str(e))
+                print("Could not inform listener " + str(listener) + " on config change " + str(topic) + ":" + str(e))
 
     # Configfilename
     CONFIG_FILE = 'oscbrickconfig.cfg'

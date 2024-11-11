@@ -35,6 +35,8 @@ Received OSC can be logged with
 Can be used to save the 
 
 1. name
+2. target-ip
+3. incoming and target port
 
 of the brick
 
@@ -54,6 +56,16 @@ of the brick
   sets the name of the brick  
   Example: `/brick/name realBrick` -> `/brick/name/changed realBrick`
 
+## Target
+- `/ID/target [ip as string]`  
+  sets the ip address to send osc messages to, can be seen on EV3-screen. Default is the local broadcast address 
+  Example: `/ID/target 192.168.178.30`
+
+## Port
+- `/ID/port/incoming [port as int]`  
+  sets the port for incoming osc-messages, can be seen on EV3-screen. Default is `9001`
+- `/ID/port/target [port as int]`
+  sets the port to target for outgoing osc-messages, can be seen on EV3-screen. Default is `9001`
 
 ## Light
 - `/ID/light [color as string]`  
