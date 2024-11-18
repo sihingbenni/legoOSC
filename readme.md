@@ -198,11 +198,20 @@ Can only say one text at a time and breaks both if trying to say another, while 
 - `/ID/touch/PORT` replies with `/ID/touch/PORT/pressed [value as bool]`  
   returns the status at PORT  
   Example: `/brick/touch/s3` -> `/brick/touch/s3/pressed true` sensor is pressed 
-- `/ID/touch/PORT/onchange` replies with `/ID/touch/PORT/changed/pressed [value as bool]`  
+- `/ID/touch/PORT/onchange/start` replies with `/ID/touch/PORT/changed/pressed [value as bool]`  
   sets a listener to relay status changes at PORT  
-  Example: `/brick/touch/s3/onchange` -> `/brick/touch/s3/changed/pressed true` when sensor is pressed and `/brick/touch/s3/changed/pressed false` when sensor is released
+  Example: `/brick/touch/s3/onchange/start` -> `/brick/touch/s3/changed/pressed true` when sensor is pressed and `/brick/touch/s3/changed/pressed false` when sensor is released
+- `/ID/touch/PORT/onchange/stop`  
+  stops a listener at PORT  
+  Example: `/brick/touch/s3/onchange/stop`
 
 ##  InfraredSensor
 - `/ID/infrared/PORT/distance` replies with `/ID/infrared/PORT/distance/is [distance as int]`  
   returns the distance at PORT in 0 to 100 percent.  
   Example: `/brick/infrared/s2/distance` -> `/brick/infrared/s2/distance/is 80` distance is 80%
+
+
+# Changes
+- 1.1  
+  Changed `/ID/touch/PORT/onchange` to `/ID/touch/PORT/onchange/start`  
+  Added `/ID/touch/PORT/onchange/stop`

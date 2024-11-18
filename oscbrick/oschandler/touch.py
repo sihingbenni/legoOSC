@@ -20,8 +20,11 @@ class TouchHandler:
                 self.create_default_touch_sensor(port)
                 if len(path) == 2:
                     run_in_thread(self.touch, port)
-                elif len(path) == 3 and path[2] == 'onchange':
-                    run_in_thread(self.touch_on_change, port)
+                elif len(path) >= 3 and path[2] == 'onchange':
+                    if path[3] == 'stop':
+                        self.stop_polling(port)
+                    elif path[3] == 'start':
+                        run_in_thread(self.start_polling, port)
 
 
     def create_default_touch_sensor(self, port):
@@ -31,12 +34,21 @@ class TouchHandler:
     def touch(self, port):
         pressed = self.touch_sensors[port].pressed()
         Sender.send(construct_path("touch", port_to_string(port), "pressed"), bool(pressed))
-    
-    def touch_on_change(self, port):
-        old_pressed = None
-        while(True):
-            pressed = self.touch_sensors[port].pressed()
-            if pressed != old_pressed:
-                Sender.send(construct_path("touch", port_to_string(port),"changed", "pressed"), bool(pressed))
-            old_pressed = pressed
-            sleep(0.01)
+
+
+    touch_polling = dict()
+    def start_polling(self, port):
+        if port not in self.touch_polling:
+            self.touch_polling[port] = True
+            old_pressed = None
+            while(self.touch_polling[port]):
+                pressed = self.touch_sensors[port].pressed()
+                if pressed != old_pressed:
+                    Sender.send(construct_path("touch", port_to_string(port),"changed", "pressed"), bool(pressed))
+                old_pressed = pressed
+                sleep(0.01)
+            del self.touch_polling[port]
+
+    def stop_polling(self, port):
+        if port in self.touch_polling:
+            self.touch_polling[port] = False
