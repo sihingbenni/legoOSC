@@ -8,7 +8,25 @@ uses modified https://github.com/SpotlightKid/micropython-osc
 2. run it on the EV3-Brick
 3. use the Routes to control the Brick
 
+### UDP
+- default incomming port: 9001
+- listens on own IP and local BROADCAST
+
+
+- Default outgoing target port: 9001
+- default taget is local BROADCAST 
+
+### TCP
+- Default-Port: 9002
+- listens on own IP for connections
+- only on connection at the time
+- when connected:
+  - expects valid OSC + `\n` as last byte -> **must not use any argument with a `\n` inside**
+  - sends valid OSC + `\n` as last byte
+
 # Routes:
+
+## Placeholder
 Placeholders can be:
 - `ID` for `IP-Address` or `Name`  
 - `PORT` for `a`, `b`, `c`, `d`, `s1`, `s2`, `s3` or `s4` 
@@ -126,12 +144,12 @@ Can only say one text at a time and breaks both if trying to say another, while 
 - `/ID/motor/PORTs/hold`  
   holds the motor at PORTs  
   Example: `/brick/motor/a/hold` -> motor at port a holds the current position
-- `/ID/motor/PORTs/angle` -> sends `/ID/motor/PORT/angle/at [angle as int]`  
+- `/ID/motor/PORTs/angle` -> sends `/ID/motor/PORT/angle/is [angle as int]`  
   returns the current angle of the motor at the given PORTs. Angle can be a negative or positive integer  
-  Example: `/brick/motor/a/angle` -> sends `/brick/motor/a/angle/at 271` motor at port a is at 271°
-- `/ID/motor/PORTs/angle [angle as int]` -> sends `/ID/motor/PORT/angle/at [angle as int]`  
+  Example: `/brick/motor/a/angle` -> sends `/brick/motor/a/angle/is 271` motor at port a is at 271°
+- `/ID/motor/PORTs/angle [angle as int]` -> sends `/ID/motor/PORT/angle/is [angle as int]`  
   sets the current angle of the motor at the given PORTs to the given number. Angle can be a negative or positive integer  
-  Example: `/brick/motor/a/angle 90` -> sends `/brick/motor/a/angle/at 90` the motor at port a is set to 90°
+  Example: `/brick/motor/a/angle 90` -> sends `/brick/motor/a/angle/is 90` the motor at port a is set to 90°
 - `/ID/motor/PORTs/run [speed as int]`  
   runs the motor at PORTs with the given speed. Speed can be a negative or positive integer  
   Example: `/brick/motor/a/run 100` -> motor at port a runs with speed 100
@@ -145,24 +163,24 @@ Can only say one text at a time and breaks both if trying to say another, while 
   - power is the percentage of the motor torque. 0 to 100
   
   Example: `/brick/motor/a/run/until_stalled 100 hold 25` -> `/brick/motor/a/stalled 773` motor at port a ran with speed 100 and 25% torque until it is blocked at 773° and holds its position there
-- `/ID/motor/PORTs/run/target [speed as int, angle as int]` -> sends `/ID/motor/PORT/reached/target [angle as int]`  
+- `/ID/motor/PORTs/run/target [speed as int, angle as int]` -> sends `/ID/motor/PORT/target/reached [angle as int]`  
   runs the motor at PORTs with the given speed to the given angle. Speed and angle can be a negative or positive integer and is in relation to the given angle  
   Example: 
-  - `/brick/motor/a/run/target 100 1000` -> `/brick/motor/a/reached/target 1000` motor at port a runs with speed 100 until it reaches 1000°
-  - `/brick/motor/a/run/target 250 -300` -> `/brick/motor/a/reached/target -300` motor at port a runs with speed -250 until it reaches -300°
-- `/ID/motor/PORTs/run/target [speed as int, angle as int, MOTOR_ACTION as string]` -> sends `/ID/motor/PORT/reached/target [angle as int]`  
+  - `/brick/motor/a/run/target 100 1000` -> `/brick/motor/a/target/reached 1000` motor at port a runs with speed 100 until it reaches 1000°
+  - `/brick/motor/a/run/target 250 -300` -> `/brick/motor/a/target/reached -300` motor at port a runs with speed -250 until it reaches -300°
+- `/ID/motor/PORTs/run/target [speed as int, angle as int, MOTOR_ACTION as string]` -> sends `/ID/motor/PORT/target/reached [angle as int]`  
   runs the motor at PORTs with the given speed to the given angle and executes the given MOTOR_ACTION. Speed and angle can be a negative or positive integer and is in relation to the given angle   
   Example:  
-  - `/brick/motor/a/run/target 100 1000 hold` -> `/brick/motor/a/reached/target 1000` motor at port a runs with speed 100 until it reaches 1000° and holds there   
-  - `/brick/motor/a/run/target 100 -500 hold` -> `/brick/motor/a/reached/target -500` motor at port a runs with speed -100 until it reaches 500° and holds there
-- `/ID/motor/PORTs/multirun/target [int, ints]` -> sends per `/ID/motor/PORT/reached/target [int]`  
+  - `/brick/motor/a/run/target 100 1000 hold` -> `/brick/motor/a/target/reached 1000` motor at port a runs with speed 100 until it reaches 1000° and holds there   
+  - `/brick/motor/a/run/target 100 -500 hold` -> `/brick/motor/a/target/reached -500` motor at port a runs with speed -100 until it reaches 500° and holds there
+- `/ID/motor/PORTs/multirun/target [int, ints]` -> sends per `/ID/motor/PORT/target/reached [int]`  
   runs the motor at PORTs with the given speed to the given angle corresponding to the port position. Speed and angles can be a negative or positive integer and is in relation to the given angle    
-  Example: `/brick/motor/ab/run/target 100 1000 -1000` -> `/brick/motor/a/reached/target 1000` and `/brick/motor/b/reached/target -1000`  
+  Example: `/brick/motor/ab/run/target 100 1000 -1000` -> `/brick/motor/a/target/reached 1000` and `/brick/motor/b/target/reached -1000`  
   - motor at port a runs with speed 100 until it reaches 1000°
   - motor at port b runs with speed -100 until it reaches -1000°
-- `/ID/motor/PORTs/multirun/target [int, ints, MOTOR_ACTION]` -> sends per `/ID/motor/PORT/reached/target [int]`  
+- `/ID/motor/PORTs/multirun/target [int, ints, MOTOR_ACTION]` -> sends per `/ID/motor/PORT/target/reached [int]`  
   runs the motor at PORTs with the given speed to the given angle corresponding to the port position. Speed and angles can be a negative or positive integer and is in relation to the given angle    
-  Example: `/brick/motor/ab/run/target 100 1000 -1000 hold` -> `/brick/motor/a/reached/target 1000` and `/brick/motor/b/reached/target -1000`  
+  Example: `/brick/motor/ab/run/target 100 1000 -1000 hold` -> `/brick/motor/a/target/reached 1000` and `/brick/motor/b/target/reached -1000`  
   - motor at port a runs with speed 100 until it reaches 1000° and holds there 
   - motor at port b runs with speed -100 until it reaches -1000° and holds there
 
@@ -210,8 +228,25 @@ Can only say one text at a time and breaks both if trying to say another, while 
   returns the distance at PORT in 0 to 100 percent.  
   Example: `/brick/infrared/s2/distance` -> `/brick/infrared/s2/distance/is 80` distance is 80%
 
+##  Gyroscope
+- `/ID/gyroscope/PORT/speed` replies with `/ID/gyroscope/PORT/speed/is [speed as int]`  
+  returns the speed of the rotation at PORT in deg per second. Resets the angle to 0 on call  
+  Example: `/brick/gyroscope/s2/speed` -> `/brick/gyroscope/s2/speed/is 80` speed is 80 deg/s
+- `/ID/gyroscope/PORT/angle` replies with `/ID/gyroscope/PORT/angle/is [angle as int]`  
+  returns the angle of the rotation at PORT in deg  
+  Example: `/brick/gyroscope/s2/angle` -> `/brick/gyroscope/s2/angle/is 80` angle is 80 deg
+- `/ID/gyroscope/PORT/angle [angle as int]` replies with `/ID/gyroscope/PORT/angle/is [angle as int]`  
+  sets the angle of the gyroscope at PORT  
+  Example: `/brick/gyroscope/s2/angle 0` -> `/brick/gyroscope/s2/angle/is 0` angle set to 0 deg
+
 
 # Changes
 - 1.1  
   Changed `/ID/touch/PORT/onchange` to `/ID/touch/PORT/onchange/start`  
   Added `/ID/touch/PORT/onchange/stop`
+- 1.2  
+  Added TCP  
+  Added Gyroscope  
+  Changed `/ID/motor/PORT/angle/at [angle as int]` to `/ID/motor/PORT/angle/is [angle as int]`  
+  Changed `/ID/motor/PORT/reached/target [angle as int]` to `/ID/motor/PORT/target/reached [angle as int]`
+  

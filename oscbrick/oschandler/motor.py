@@ -71,7 +71,7 @@ class MotorHandler:
             self.motors[port] = Motor(port)
 
     def send_motor_angle(self, port):
-        Sender.send(construct_path("motor", port_to_string(port), "angle", "at"), self.motors[port].angle())
+        Sender.send(construct_path("motor", port_to_string(port), "angle", "is"), self.motors[port].angle())
 
     def set_motor_angle(self, port, angle):
         self.motors[port].reset_angle(angle)
@@ -95,4 +95,4 @@ class MotorHandler:
 
     def motor_run_target(self, port, speed, angle, then=Stop.COAST):
         self.motors[port].run_target(speed, angle, then)
-        Sender.send(construct_path("motor", port_to_string(port), "reached", "target"), angle)
+        Sender.send(construct_path("motor", port_to_string(port), "target", "reached"), angle)

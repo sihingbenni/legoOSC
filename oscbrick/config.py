@@ -7,6 +7,7 @@ from oscbrick.utilities import get_ip
 class Topic:
     NAME = 'name'
     PORT = 'port'
+    TCP_PORT = 'tcp_port'
     TARGET_IP = 'target_ip'
     TARGET_PORT = 'target_port'
 
@@ -81,6 +82,16 @@ class _Config(object):
 
     def set_port(self, port):
         self._osc_brick_config['port'] = port
+        self._changed(Topic.PORT)
+
+    def tcp_port(self):
+        if 'tcp_port' in self._osc_brick_config:
+            return self._osc_brick_config['tcp_port']
+        else:
+            return 9002
+
+    def set_tcp_port(self, port):
+        self._osc_brick_config['tcp_port'] = port
         self._changed(Topic.PORT)
 
     def target_ip(self):
