@@ -1,8 +1,10 @@
 
+from oscbrick.oscbrick import EV3
+
 SAY = False
 
 
 def log_and_say(string: str):
     print(string)
     if SAY:
-        ev3.speaker.say(string)
+        EV3.speaker.say(string)

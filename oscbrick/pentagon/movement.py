@@ -3,10 +3,11 @@ from pybricks.ev3devices import Motor
 from pybricks.parameters import Port, Stop, Direction, Color
 from pybricks.robotics import DriveBase
 
-from logger import log_and_say
-from scanner import get_color, get_distance
-from utilities import run_in_thread
+from oscbrick.pentagon.logger import log_and_say
+from oscbrick.pentagon.scanner import get_color, get_distance
+from oscbrick.pentagon.utilities import run_in_thread
 
+STANDARD_DRIVE_DISTANCE = 300
 
 class LookingDirection:
     directions = ["NORTH", "EAST", "SOUTH", "WEST"]
@@ -131,7 +132,11 @@ def scan() -> dict[str, int | Color]:
     align_neck(False)
     l_distance = get_distance()
 
-    return {"distance_r": r_distance, "distance_m": m_distance, "distance_l": l_distance, "color": color}
+    result = {"distance_r": r_distance, "distance_m": m_distance, "distance_l": l_distance, "color": color}
+
+    print(result)
+
+    return result
 
 
 def check_alignment(next_instruction: str = ""):
