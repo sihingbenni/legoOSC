@@ -3,9 +3,8 @@ from pybricks.ev3devices import Motor
 from pybricks.parameters import Port, Stop, Direction, Color
 from pybricks.robotics import DriveBase
 
-from oscbrick.pentagon.logger import log_and_say
 from oscbrick.pentagon.scanner import get_color, get_distance
-from oscbrick.pentagon.utilities import run_in_thread
+from oscbrick.utilities import run_in_thread
 
 STANDARD_DRIVE_DISTANCE = 300
 
@@ -52,28 +51,33 @@ base_speed = 100
 
 def turn_right():
     looking_direction.turn_right()
-    log_and_say("Turning right!")
+    print("Turning right!")
+    robot.stop()
     robot.turn(90)
 
 
 def turn_left():
     looking_direction.turn_left()
-    log_and_say("Turning left!")
+    print("Turning left!")
+    robot.stop()
     robot.turn(-90)
 
 
 def turn_around():
     looking_direction.turn_around()
-    log_and_say("Turning around!")
+    print("Turning around!")
+    robot.stop()
     robot.turn(180)
 
 
 def spin():
-    log_and_say("You spin my head right round right round")
+    print("You spin my head right round right round")
+    robot.stop()
     robot.turn(360)
 
 
 def drive_forward(distance: int, is_check: bool = True, next_instruction: str = None):
+    robot.stop()
     robot.straight(distance)
     if is_check:
         wait(1000)
@@ -107,6 +111,7 @@ def align_backwards():
 
 
 def align_neck(isRight: bool = True):
+    robot.stop()
     print("alligning the neck")
     motor_neck.reset_angle(0)
     if isRight:
@@ -122,12 +127,12 @@ def scan() -> dict[str, int | Color]:
     align_neck(True)
     # Scan right
     r_distance = get_distance()
-    wait(500)
+    wait(1000)
     # Turn left (to middle) and scan
     motor_neck.run_angle(200, 105)
-    wait(500)
+    wait(1000)
     m_distance = get_distance()
-    wait(500)
+    wait(1000)
     # Turn left (to left)
     align_neck(False)
     l_distance = get_distance()
