@@ -3,6 +3,18 @@ A Wrapper for https://pybricks.com/ev3-micropython to control via [OSC](https://
 
 uses modified https://github.com/SpotlightKid/micropython-osc 
 
+### Starten
+Damit das Neueste Program auf dem Lego Roboter installiert wird muss zunächst sich via dem vscode Plugin mit dem Roboter verbunden werden.
+Sobald dies geschehen ist kann damit der Code auf den Roboter heruntergeladen wird die "Download und Run" Funktion aus der `.vscode/launch.json` benutzt werden.
+
+
+Damit der Code nicht erneut heruntergeladen werden muss kann das Program auf zwei weisen gestartet werden:
+* Auf dem Lego Roboter selbst im Dateibrowser die main.py starten.
+* Über ein SSH-Terminal folgendes Kommando eingeben: `brickrun --directory="/home/robot/legoOSC" "/home/robot/legoOSC/main.py"`
+
+
+
+
 ## How to use
 1. import this as a Lego-Micropython Projekt (https://pybricks.com/ev3-micropython/startrun.html)
 2. run it on the EV3-Brick
