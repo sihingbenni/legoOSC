@@ -120,8 +120,9 @@ class RobotController:
     def _get_consistent_distance(self):
         distance_1 = get_distance()
         print("Distance 1: {}".format(distance_1))
-        wait(500)
+        wait(1000)
         distance_2 = get_distance()
+        wait(1000)
         print("Distance 2: {}".format(distance_2))
         if distance_1 != distance_2:
             print("Distance values are inconsistent, rescanning...")
