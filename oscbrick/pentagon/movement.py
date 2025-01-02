@@ -81,11 +81,11 @@ def drive_forward(distance: int, is_check: bool = True, next_instruction: str = 
     robot.straight(distance)
     if is_check:
         wait(1000)
-        check_alignment(next_instruction)
+        # check_alignment(next_instruction)
 
 
 def align_forwards():
-    print("Allign Forwards")
+    print("Align Forwards")
     robot.stop()
 
     run_in_thread(motor_right.run_until_stalled, 100, Stop.BRAKE, 22)
@@ -98,7 +98,7 @@ def align_forwards():
 
 
 def align_backwards():
-    print("Allign Backwards")
+    print("Align Backwards")
     robot.stop()
 
     run_in_thread(motor_right.run_until_stalled, -100, Stop.BRAKE, 23)
@@ -112,7 +112,7 @@ def align_backwards():
 
 def align_neck(isRight: bool = True):
     robot.stop()
-    print("alligning the neck")
+    print("aligning the neck")
     motor_neck.reset_angle(0)
     if isRight:
         motor_neck.run_until_stalled(-200, Stop.COAST, 40)
