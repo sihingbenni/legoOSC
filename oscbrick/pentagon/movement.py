@@ -1,12 +1,12 @@
-from threading import Thread
-
-from pybricks.tools import wait
 from pybricks.ev3devices import Motor
-from pybricks.parameters import Port, Stop, Direction, Color
-from pybricks.robotics import DriveBase
+from pybricks.parameters import Port, Stop, Direction
+from pybricks.tools import wait
 
+from oscbrick.oschandler.motor import MotorHandler
+from oscbrick.pentagon.customdrivebase import CustomDriveBase
 from oscbrick.pentagon.scanner import get_color, get_distance
 from oscbrick.utilities import run_in_thread
+
 
 class RobotController:
     STANDARD_DRIVE_DISTANCE = 300
@@ -15,6 +15,7 @@ class RobotController:
         self.motor_left = Motor(Port.A, positive_direction=Direction.COUNTERCLOCKWISE)
         self.motor_right = Motor(Port.D)
         self.motor_neck = Motor(Port.B)
+        self.motor_handler = MotorHandler()
 
         self.initRobot()
 
@@ -22,7 +23,7 @@ class RobotController:
         self.looking_direction = self.LookingDirection()
 
     def initRobot(self):
-        self.robot = DriveBase(self.motor_left, self.motor_right, wheel_diameter=56, axle_track=47.7)
+        self.robot = CustomDriveBase(motor_handler=self.motor_handler, motor_left_port=self.motor_left, motor_right_port=self.motor_right, wheel_diameter=56, axle_track=47.7)
         self.robot.settings(100, 50, 90, 180)
 
     class LookingDirection:
