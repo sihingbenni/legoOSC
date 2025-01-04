@@ -15,7 +15,6 @@ class RobotController:
         self.robot = None
         self.motor_left = Motor(Port.A, positive_direction=Direction.COUNTERCLOCKWISE)
         self.motor_right = Motor(Port.D)
-        self.motor_neck = Motor(Port.B)
         self.motor_handler = MotorHandler()
 
         self.init_robot()
@@ -25,7 +24,7 @@ class RobotController:
 
     def init_robot(self):
         self.robot = DriveBase(self.motor_left, self.motor_right, wheel_diameter=56, axle_track=47.7)
-        self.robot.settings(50, 100, 90, 180)
+        self.robot.settings(50, 150, 90, 270)
 
     class LookingDirection:
         directions = ["NORTH", "EAST", "SOUTH", "WEST"]
@@ -74,7 +73,6 @@ class RobotController:
 
     def drive_forward(self, distance: int, is_check: bool = True, next_instruction: str = None):
         self.init_robot()
-        self.robot.stop()
         self.robot.straight(distance)
 
         if is_check:
@@ -114,38 +112,38 @@ class RobotController:
         return distance_1
 
     def scan(self, check_alignment: bool = True):
-        self.robot.stop()
+        motor_neck = Motor(Port.B)
         color = get_color()
 
         # Ausgangsposition: Mitte
         wait(500)
         m_distance = self._get_consistent_distance("m")
-        self.motor_neck.brake()
+        motor_neck.hold()
         print("Distance m: {}".format(m_distance))
 
         wait(500)
         # nach links gucken
-        self.motor_neck.run_angle(rotation_angle=-92, speed=200)
-        self.motor_neck.brake()
+        motor_neck.run_angle(rotation_angle=-92, speed=200)
+        motor_neck.hold()
         wait(500)
         l_distance = self._get_consistent_distance("l")
         print("Distance l: {}".format(l_distance))
         wait(500)
 
         # nach hinten gucken
-        self.motor_neck.run_angle(rotation_angle=-92, speed=200)
-        self.motor_neck.brake()
+        motor_neck.run_angle(rotation_angle=-92, speed=200)
+        motor_neck.hold()
         h_distance = self._get_consistent_distance("h")
         print("Distance h: {}".format(h_distance))
 
         # nach rechts gucken
-        self.motor_neck.run_angle(rotation_angle=-92, speed=200)
+        motor_neck.run_angle(rotation_angle=-92, speed=200)
+        motor_neck.hold()
         r_distance = self._get_consistent_distance("r")
-        self.motor_neck.brake()
         print("Distance r: {}".format(r_distance))
 
         # Zurück in die Ausgangsposition
-        self.motor_neck.run_target(target_angle=0, speed=200)
+        motor_neck.run_target(target_angle=0, speed=200)
 
         result = {
             "distance_m": m_distance,
