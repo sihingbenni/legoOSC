@@ -117,27 +117,41 @@ class RobotController:
     def scan(self, check_alignment: bool = True):
         color = get_color()
 
-        self.align_neck(True)
-        wait(500)
-        r_distance = self._get_consistent_distance()
-        print("Distance r: {}".format(r_distance))
-
-        self.motor_neck.run_angle(200, 115)
+        # Ausgangsposition: Mitte
         wait(500)
         m_distance = self._get_consistent_distance()
+        self.motor_neck.brake()
         print("Distance m: {}".format(m_distance))
 
-
-
-        self.align_neck(False)
+        wait(500)
+        # nach links gucken
+        self.motor_neck.run_angle(rotation_angle=-90, speed=200)
+        self.motor_neck.brake()
+        wait(500)
         l_distance = self._get_consistent_distance()
         print("Distance l: {}".format(l_distance))
+        wait(500)
 
+        # nach hinten gucken
+        self.motor_neck.run_angle(rotation_angle=-90, speed=200)
+        self.motor_neck.brake()
+        h_distance = self._get_consistent_distance()
+        print("Distance h: {}".format(h_distance))
+
+        # nach rechts gucken
+        self.motor_neck.run_angle(rotation_angle=-90, speed=200)
+        r_distance = self._get_consistent_distance()
+        self.motor_neck.brake()
+        print("Distance r: {}".format(r_distance))
+
+        # Zurück in die Ausgangsposition
+        self.motor_neck.run_target(target_angle=0, speed=200)
 
         result = {
-            "distance_r": r_distance,
             "distance_m": m_distance,
             "distance_l": l_distance,
+            "distance_h": h_distance,
+            "distance_r": r_distance,
             "color": color
         }
 
