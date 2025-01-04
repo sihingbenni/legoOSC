@@ -76,6 +76,21 @@ class PentagonControlHandler:
                 elif len(path) > 1 and path[1] == 'scan':
                     print("pentagon scan")
                     try:
+                        result = self.robot_controller.scan(check_alignment=False)
+                        Sender.send(construct_path('pentagon', 'response', 'scan', 'done'),
+                                    result.get("distance_r"),
+                                    result.get("distance_m"),
+                                    result.get("distance_l"),
+                                    result.get("distance_h"),
+                                    str(result.get("color"))
+                        )
+                    except Exception as e:
+                        print("Scan Error: {0}".format(e))
+                        Sender.send(construct_path('pentagon', 'response', 'scan', 'error'))
+
+                elif len(path) > 1 and path[1] == 'scan+align':
+                    print("pentagon scan + alignment")
+                    try:
                         result = self.robot_controller.scan(check_alignment=True)
                         Sender.send(construct_path('pentagon', 'response', 'scan', 'done'),
                                     result.get("distance_r"),
