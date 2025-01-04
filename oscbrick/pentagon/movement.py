@@ -5,7 +5,6 @@ from pybricks.tools import wait
 
 from oscbrick.oschandler.motor import MotorHandler
 from oscbrick.pentagon.scanner import get_color, get_distance
-from oscbrick.utilities import run_in_thread
 
 
 class RobotController:
@@ -102,45 +101,46 @@ class RobotController:
         wait(1000)
         self.drive_forward(40, False)
     
-    def _get_consistent_distance(self):
+    def _get_consistent_distance(self, direction_string: str):
         distance_1 = get_distance()
-        print("Distance 1: {}".format(distance_1))
+        print("Distance {}-1: {}".format(direction_string, distance_1))
         wait(1000)
         distance_2 = get_distance()
         wait(1000)
-        print("Distance 2: {}".format(distance_2))
+        print("Distance {}-2: {}".format(direction_string, distance_2))
         if distance_1 != distance_2:
             print("Distance values are inconsistent, rescanning...")
             return get_distance()
         return distance_1
 
     def scan(self, check_alignment: bool = True):
+        self.robot.stop()
         color = get_color()
 
         # Ausgangsposition: Mitte
         wait(500)
-        m_distance = self._get_consistent_distance()
+        m_distance = self._get_consistent_distance("m")
         self.motor_neck.brake()
         print("Distance m: {}".format(m_distance))
 
         wait(500)
         # nach links gucken
-        self.motor_neck.run_angle(rotation_angle=-90, speed=200)
+        self.motor_neck.run_angle(rotation_angle=-92, speed=200)
         self.motor_neck.brake()
         wait(500)
-        l_distance = self._get_consistent_distance()
+        l_distance = self._get_consistent_distance("l")
         print("Distance l: {}".format(l_distance))
         wait(500)
 
         # nach hinten gucken
-        self.motor_neck.run_angle(rotation_angle=-90, speed=200)
+        self.motor_neck.run_angle(rotation_angle=-92, speed=200)
         self.motor_neck.brake()
-        h_distance = self._get_consistent_distance()
+        h_distance = self._get_consistent_distance("h")
         print("Distance h: {}".format(h_distance))
 
         # nach rechts gucken
-        self.motor_neck.run_angle(rotation_angle=-90, speed=200)
-        r_distance = self._get_consistent_distance()
+        self.motor_neck.run_angle(rotation_angle=-92, speed=200)
+        r_distance = self._get_consistent_distance("r")
         self.motor_neck.brake()
         print("Distance r: {}".format(r_distance))
 

@@ -76,7 +76,7 @@ class PentagonControlHandler:
                 elif len(path) > 1 and path[1] == 'scan':
                     print("pentagon scan")
                     try:
-                        result = self.robot_controller.scan()
+                        result = self.robot_controller.scan(check_alignment=True)
                         Sender.send(construct_path('pentagon', 'response', 'scan', 'done'),
                                     result.get("distance_r"),
                                     result.get("distance_m"),
