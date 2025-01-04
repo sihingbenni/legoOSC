@@ -22,10 +22,10 @@ class PentagonControlHandler:
                         print("pentagon drive forward")
                         try:
                             if len(args) == 0:
-                                self.robot_controller.drive_forward(self.robot_controller.STANDARD_DRIVE_DISTANCE)
+                                self.robot_controller.drive_forward(self.robot_controller.STANDARD_DRIVE_DISTANCE, False)
                                 Sender.send(construct_path('pentagon', 'response', 'drive', 'forward', 'done'))
                             elif len(args) == 1 and str(types_of_args) == 'i':
-                                self.robot_controller.drive_forward(int(args[0]))
+                                self.robot_controller.drive_forward(int(args[0]), False)
                                 Sender.send(construct_path('pentagon', 'response', 'drive', 'forward', 'done'))
                         except Exception as e:
                             print("Drive Forward Error: {0}".format(e))
@@ -35,10 +35,10 @@ class PentagonControlHandler:
                         print("pentagon drive backward")
                         try:
                             if len(args) == 0:
-                                self.robot_controller.drive_forward(-self.robot_controller.STANDARD_DRIVE_DISTANCE)
+                                self.robot_controller.drive_forward(-self.robot_controller.STANDARD_DRIVE_DISTANCE, False)
                                 Sender.send(construct_path('pentagon', 'response', 'drive', 'backward', 'done'))
                             elif len(args) == 1 and str(types_of_args) == 'i':
-                                self.robot_controller.drive_forward(-int(args[0]))
+                                self.robot_controller.drive_forward(-int(args[0]), False)
                                 Sender.send(construct_path('pentagon', 'response', 'drive', 'backward', 'done'))
                         except Exception as e:
                             print("Drive Backward Error: {0}".format(e))
@@ -77,8 +77,13 @@ class PentagonControlHandler:
                     print("pentagon scan")
                     try:
                         result = self.robot_controller.scan()
-                        Sender.send(construct_path('pentagon', 'response', 'scan', 'done'), result.get("distance_r"),
-                                    result.get("distance_m"), result.get("distance_l"), str(result.get("color")))
+                        Sender.send(construct_path('pentagon', 'response', 'scan', 'done'),
+                                    result.get("distance_r"),
+                                    result.get("distance_m"),
+                                    result.get("distance_l"),
+                                    result.get("distance_h"),
+                                    str(result.get("color"))
+                        )
                     except Exception as e:
                         print("Scan Error: {0}".format(e))
                         Sender.send(construct_path('pentagon', 'response', 'scan', 'error'))
