@@ -8,7 +8,7 @@ from oscbrick.pentagon.scanner import get_color, get_distance
 
 
 class RobotController:
-    STANDARD_DRIVE_DISTANCE = 250
+    STANDARD_DRIVE_DISTANCE = 300
     ALIGN_TIME = 2000
     WAIT_TIME = 250
     PUSH_AWAY=30
