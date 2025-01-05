@@ -5,27 +5,28 @@ from pybricks.tools import wait
 
 from oscbrick.oschandler.motor import MotorHandler
 from oscbrick.pentagon.scanner import get_color, get_distance
-from oscbrick.utilities import run_in_thread
 
 
 class RobotController:
-    STANDARD_DRIVE_DISTANCE = 300
-    waitTime = 250
+    STANDARD_DRIVE_DISTANCE = 250
+    ALIGN_TIME = 2000
+    WAIT_TIME = 250
+    PUSH_AWAY=30
 
     def __init__(self):
+        self.robot = None
         self.motor_left = Motor(Port.A, positive_direction=Direction.COUNTERCLOCKWISE)
         self.motor_right = Motor(Port.D)
-        self.motor_neck = Motor(Port.B)
         self.motor_handler = MotorHandler()
 
-        self.initRobot()
+        self.init_robot()
 
         self.skip_next_instruction = False
         self.looking_direction = self.LookingDirection()
 
-    def initRobot(self):
+    def init_robot(self):
         self.robot = DriveBase(self.motor_left, self.motor_right, wheel_diameter=56, axle_track=47.7)
-        self.robot.settings(100, 50, 90, 180)
+        self.robot.settings(50, 150, 90, 270)
 
     class LookingDirection:
         directions = ["NORTH", "EAST", "SOUTH", "WEST"]
@@ -46,153 +47,154 @@ class RobotController:
             self.current_direction = self.directions[idx_next]
 
     def turn_right(self):
-        self.initRobot()
+        self.init_robot()
         self.looking_direction.turn_right()
         print("Turning right!")
         self.robot.stop()
         self.robot.turn(90)
 
     def turn_left(self):
-        self.initRobot()
+        self.init_robot()
         self.looking_direction.turn_left()
         print("Turning left!")
         self.robot.stop()
         self.robot.turn(-90)
 
     def turn_around(self):
-        self.initRobot()
+        self.init_robot()
         self.looking_direction.turn_around()
         print("Turning around!")
         self.robot.stop()
         self.robot.turn(180)
 
     def spin(self):
-        self.initRobot()
+        self.init_robot()
         print("You spin my head right round right round")
         self.robot.stop()
         self.robot.turn(360)
 
     def drive_forward(self, distance: int, is_check: bool = True, next_instruction: str = None):
-        self.initRobot()
-        self.robot.stop()
+        self.init_robot()
         self.robot.straight(distance)
-        
+
         if is_check:
-            wait(waitTime)
+            wait(self.WAIT_TIME)
             self.check_alignment(next_instruction)
 
     def align_forwards(self):
-        self.initRobot()
-
+        self.init_robot()
         print("Align Forwards")
         self.robot.stop()
-
-        run_in_thread(self.motor_right.run_until_stalled, 100, Stop.BRAKE, 22)
-        run_in_thread(self.motor_left.run_until_stalled, 100, Stop.BRAKE, 22)
-        wait(waitTime)
-        while (self.motor_right.speed() > 0 or self.motor_left.speed() > 0):
-            pass
-        wait(waitTime)
-        self.drive_forward(-40, False)
+        self.robot.drive(50, 0)
+        wait(self.ALIGN_TIME)
+        self.robot.stop()
+        wait(self.WAIT_TIME)
+        self.drive_forward(-self.PUSH_AWAY, False)
 
     def align_backwards(self):
-        self.initRobot()
+        self.init_robot()
         print("Align Backwards")
         self.robot.stop()
-
-        run_in_thread(self.motor_right.run_until_stalled, -100, Stop.BRAKE, 23)
-        run_in_thread(self.motor_left.run_until_stalled, -100, Stop.BRAKE, 223)
-        wait(waitTime)
-        while (self.motor_right.speed() > 0 or self.motor_left.speed() > 0):
-            pass
-        wait(waitTime)
-        self.drive_forward(40, False)
-
-    def align_neck(self, is_right: bool = True):
-        self.initRobot()
+        self.robot.drive(-50, 0)
+        wait(self.ALIGN_TIME)
         self.robot.stop()
-        print("Aligning the neck")
-        self.motor_neck.reset_angle(0)
-        if is_right:
-            self.motor_neck.run_until_stalled(-200, Stop.BRAKE, 40)
-        else:
-            self.motor_neck.run_until_stalled(200, Stop.BRAKE, 40)
-        self.motor_neck.reset_angle(0)
+        wait(self.WAIT_TIME)
+        self.drive_forward(self.PUSH_AWAY, False)
     
-    def _get_consistent_distance(self):
+    def _get_consistent_distance(self, direction_string: str):
         distance_1 = get_distance()
-        print("Distance 1: {}".format(distance_1))
-        wait(waitTime)
+        print("Distance {}-1: {}".format(direction_string, distance_1))
+        wait(self.WAIT_TIME)
         distance_2 = get_distance()
-        wait(waitTime)
-        print("Distance 2: {}".format(distance_2))
+        wait(self.WAIT_TIME)
+        print("Distance {}-2: {}".format(direction_string, distance_2))
         if distance_1 != distance_2:
             print("Distance values are inconsistent, rescanning...")
             return get_distance()
         return distance_1
 
-    def scan(self):
+    def scan(self, check_alignment: bool = True):
+        motor_neck = Motor(Port.B)
         color = get_color()
 
-        self.align_neck(True)
-        wait(waitTime)
-        r_distance = self._get_consistent_distance()
-        print("Distance r: {}".format(r_distance))
-
-        self.motor_neck.run_angle(200, 115)
-        wait(waitTime)
-        m_distance = self._get_consistent_distance()
+        # Ausgangsposition: Mitte
+        wait(self.WAIT_TIME)
+        m_distance = self._get_consistent_distance("m")
+        motor_neck.hold()
         print("Distance m: {}".format(m_distance))
 
-
-
-        self.align_neck(False)
-        l_distance = self._get_consistent_distance()
+        wait(self.WAIT_TIME)
+        # nach links gucken
+        motor_neck.run_angle(rotation_angle=-92, speed=200)
+        motor_neck.hold()
+        wait(self.WAIT_TIME)
+        l_distance = self._get_consistent_distance("l")
         print("Distance l: {}".format(l_distance))
+        wait(self.WAIT_TIME)
 
+        # nach hinten gucken
+        motor_neck.run_angle(rotation_angle=-92, speed=200)
+        motor_neck.hold()
+        h_distance = self._get_consistent_distance("h")
+        print("Distance h: {}".format(h_distance))
+
+        # nach rechts gucken
+        motor_neck.run_angle(rotation_angle=-92, speed=200)
+        motor_neck.hold()
+        r_distance = self._get_consistent_distance("r")
+        print("Distance r: {}".format(r_distance))
+
+        # Zurück in die Ausgangsposition
+        motor_neck.run_target(target_angle=0, speed=200)
 
         result = {
-            "distance_r": r_distance,
             "distance_m": m_distance,
             "distance_l": l_distance,
+            "distance_h": h_distance,
+            "distance_r": r_distance,
             "color": color
         }
 
+        if check_alignment:
+            self.check_alignment(scan_result=result)
         print(result)
         return result
 
-    def check_alignment(self, next_instruction: str = ""):
-        self.initRobot()
-        scan_result = self.scan()
+    def check_alignment(self, next_instruction: str = "", scan_result: dict = None):
+        self.init_robot()
+
+        if scan_result is None:
+            scan_result = self.scan()
+
         print("Checking Alignment")
         print(scan_result)
 
         if scan_result.get("distance_m") < 140:
             self.align_forwards()
-            wait(2000)
+            wait(self.ALIGN_TIME)
 
         if scan_result.get("distance_r") < 140:
             self.turn_left()
-            wait(waitTime)
+            wait(self.WAIT_TIME)
             self.align_backwards()
             if next_instruction != "turn_left":
-                wait(waitTime)
+                wait(self.WAIT_TIME)
                 self.turn_right()
             else:
                 self.skip_next_instruction = True
 
         elif scan_result.get("distance_l") < 140:
             self.turn_right()
-            wait(waitTime)
+            wait(self.WAIT_TIME)
             self.align_backwards()
             if next_instruction != "turn_right":
-                wait(waitTime)
+                wait(self.WAIT_TIME)
                 self.turn_left()
             else:
                 self.skip_next_instruction = True
 
     def drive_according_to_list(self, instructions):
-        self.initRobot()
+        self.init_robot()
         print("Driving according to instruction list")
         for idx, instruction in enumerate(instructions):
             print("Step: {}: {}".format(idx + 1, instruction))
@@ -203,7 +205,7 @@ class RobotController:
                 continue
 
             if instruction == "drive_forward":
-                self.drive_forward(self.STANDARD_DRIVE_DISTANCE)
+                self.drive_forward(self.STANDARD_DRIVE_DISTANCE, True)
 
             elif instruction == "turn_around":
                 self.turn_around()
@@ -214,4 +216,4 @@ class RobotController:
             elif instruction == "turn_right":
                 self.turn_right()
 
-            wait(waitTime)
+            wait(self.WAIT_TIME)
