@@ -123,7 +123,7 @@ class RobotController:
 
         wait(500)
         # nach links gucken
-        motor_neck.run_angle(rotation_angle=-92, speed=200)
+        motor_neck.run_angle(rotation_angle=-107, speed=200)
         motor_neck.hold()
         wait(500)
         l_distance = self._get_consistent_distance("l")
@@ -131,13 +131,13 @@ class RobotController:
         wait(500)
 
         # nach hinten gucken
-        motor_neck.run_angle(rotation_angle=-92, speed=200)
+        motor_neck.run_angle(rotation_angle=-77, speed=200)
         motor_neck.hold()
         h_distance = self._get_consistent_distance("h")
         print("Distance h: {}".format(h_distance))
 
         # nach rechts gucken
-        motor_neck.run_angle(rotation_angle=-92, speed=200)
+        motor_neck.run_angle(rotation_angle=-77, speed=200)
         motor_neck.hold()
         r_distance = self._get_consistent_distance("r")
         print("Distance r: {}".format(r_distance))
