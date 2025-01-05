@@ -26,7 +26,7 @@ class RobotController:
 
     def init_robot(self):
         self.robot = DriveBase(self.motor_left, self.motor_right, wheel_diameter=56, axle_track=47.7)
-        self.robot.settings(50, 150, 90, 270)
+        self.robot.settings(80, 150, 90, 270)
 
     class LookingDirection:
         directions = ["NORTH", "EAST", "SOUTH", "WEST"]
