@@ -164,7 +164,7 @@ class RobotController:
         self.init_robot()
 
         if scan_result is None:
-            scan_result = self.scan()
+            scan_result = self.scan(False)
 
         print("Checking Alignment")
         print(scan_result)

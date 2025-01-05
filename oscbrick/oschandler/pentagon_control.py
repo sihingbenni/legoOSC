@@ -30,7 +30,18 @@ class PentagonControlHandler:
                         except Exception as e:
                             print("Drive Forward Error: {0}".format(e))
                             Sender.send(construct_path('pentagon', 'response', 'drive', 'forward', 'error'))
-
+                    elif len(path) > 2 and path[2] == 'forward+align':
+                        print("pentagon drive forward+align")
+                        try:
+                            if len(args) == 0:
+                                self.robot_controller.drive_forward(self.robot_controller.STANDARD_DRIVE_DISTANCE, True)
+                                Sender.send(construct_path('pentagon', 'response', 'drive', 'forward', 'done'))
+                            elif len(args) == 1 and str(types_of_args) == 'i':
+                                self.robot_controller.drive_forward(int(args[0]), True)
+                                Sender.send(construct_path('pentagon', 'response', 'drive', 'forward', 'done'))
+                        except Exception as e:
+                            print("Drive Forward Error: {0}".format(e))
+                            Sender.send(construct_path('pentagon', 'response', 'drive', 'forward', 'error'))
                     elif len(path) > 2 and path[2] == 'backward':
                         print("pentagon drive backward")
                         try:
