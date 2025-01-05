@@ -8,8 +8,10 @@ from oscbrick.pentagon.scanner import get_color, get_distance
 
 
 class RobotController:
-    STANDARD_DRIVE_DISTANCE = 300
+    STANDARD_DRIVE_DISTANCE = 250
     ALIGN_TIME = 2000
+    WAIT_TIME = 250
+    PUSH_AWAY=30
 
     def __init__(self):
         self.robot = None
@@ -76,7 +78,7 @@ class RobotController:
         self.robot.straight(distance)
 
         if is_check:
-            wait(1000)
+            wait(self.WAIT_TIME)
             self.check_alignment(next_instruction)
 
     def align_forwards(self):
@@ -86,8 +88,8 @@ class RobotController:
         self.robot.drive(50, 0)
         wait(self.ALIGN_TIME)
         self.robot.stop()
-        wait(1000)
-        self.drive_forward(-40, False)
+        wait(self.WAIT_TIME)
+        self.drive_forward(-self.PUSH_AWAY, False)
 
     def align_backwards(self):
         self.init_robot()
@@ -96,15 +98,15 @@ class RobotController:
         self.robot.drive(-50, 0)
         wait(self.ALIGN_TIME)
         self.robot.stop()
-        wait(1000)
-        self.drive_forward(40, False)
+        wait(self.WAIT_TIME)
+        self.drive_forward(self.PUSH_AWAY, False)
     
     def _get_consistent_distance(self, direction_string: str):
         distance_1 = get_distance()
         print("Distance {}-1: {}".format(direction_string, distance_1))
-        wait(1000)
+        wait(self.WAIT_TIME)
         distance_2 = get_distance()
-        wait(1000)
+        wait(self.WAIT_TIME)
         print("Distance {}-2: {}".format(direction_string, distance_2))
         if distance_1 != distance_2:
             print("Distance values are inconsistent, rescanning...")
@@ -116,19 +118,19 @@ class RobotController:
         color = get_color()
 
         # Ausgangsposition: Mitte
-        wait(500)
+        wait(self.WAIT_TIME)
         m_distance = self._get_consistent_distance("m")
         motor_neck.hold()
         print("Distance m: {}".format(m_distance))
 
-        wait(500)
+        wait(self.WAIT_TIME)
         # nach links gucken
         motor_neck.run_angle(rotation_angle=-107, speed=200)
         motor_neck.hold()
-        wait(500)
+        wait(self.WAIT_TIME)
         l_distance = self._get_consistent_distance("l")
         print("Distance l: {}".format(l_distance))
-        wait(500)
+        wait(self.WAIT_TIME)
 
         # nach hinten gucken
         motor_neck.run_angle(rotation_angle=-77, speed=200)
@@ -169,24 +171,24 @@ class RobotController:
 
         if scan_result.get("distance_m") < 140:
             self.align_forwards()
-            wait(2000)
+            wait(self.ALIGN_TIME)
 
         if scan_result.get("distance_r") < 140:
             self.turn_left()
-            wait(1000)
+            wait(self.WAIT_TIME)
             self.align_backwards()
             if next_instruction != "turn_left":
-                wait(1000)
+                wait(self.WAIT_TIME)
                 self.turn_right()
             else:
                 self.skip_next_instruction = True
 
         elif scan_result.get("distance_l") < 140:
             self.turn_right()
-            wait(1000)
+            wait(self.WAIT_TIME)
             self.align_backwards()
             if next_instruction != "turn_right":
-                wait(1000)
+                wait(self.WAIT_TIME)
                 self.turn_left()
             else:
                 self.skip_next_instruction = True
@@ -214,4 +216,4 @@ class RobotController:
             elif instruction == "turn_right":
                 self.turn_right()
 
-            wait(1000)
+            wait(self.WAIT_TIME)
