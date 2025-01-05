@@ -10,6 +10,7 @@ from oscbrick.utilities import run_in_thread
 
 class RobotController:
     STANDARD_DRIVE_DISTANCE = 300
+    waitTime = 250
 
     def __init__(self):
         self.motor_left = Motor(Port.A, positive_direction=Direction.COUNTERCLOCKWISE)
@@ -77,7 +78,7 @@ class RobotController:
         self.robot.straight(distance)
         
         if is_check:
-            wait(1000)
+            wait(waitTime)
             self.check_alignment(next_instruction)
 
     def align_forwards(self):
@@ -88,10 +89,10 @@ class RobotController:
 
         run_in_thread(self.motor_right.run_until_stalled, 100, Stop.BRAKE, 22)
         run_in_thread(self.motor_left.run_until_stalled, 100, Stop.BRAKE, 22)
-        wait(1000)
+        wait(waitTime)
         while (self.motor_right.speed() > 0 or self.motor_left.speed() > 0):
             pass
-        wait(1000)
+        wait(waitTime)
         self.drive_forward(-40, False)
 
     def align_backwards(self):
@@ -101,10 +102,10 @@ class RobotController:
 
         run_in_thread(self.motor_right.run_until_stalled, -100, Stop.BRAKE, 23)
         run_in_thread(self.motor_left.run_until_stalled, -100, Stop.BRAKE, 223)
-        wait(1000)
+        wait(waitTime)
         while (self.motor_right.speed() > 0 or self.motor_left.speed() > 0):
             pass
-        wait(1000)
+        wait(waitTime)
         self.drive_forward(40, False)
 
     def align_neck(self, is_right: bool = True):
@@ -121,9 +122,9 @@ class RobotController:
     def _get_consistent_distance(self):
         distance_1 = get_distance()
         print("Distance 1: {}".format(distance_1))
-        wait(1000)
+        wait(waitTime)
         distance_2 = get_distance()
-        wait(1000)
+        wait(waitTime)
         print("Distance 2: {}".format(distance_2))
         if distance_1 != distance_2:
             print("Distance values are inconsistent, rescanning...")
@@ -134,12 +135,12 @@ class RobotController:
         color = get_color()
 
         self.align_neck(True)
-        wait(500)
+        wait(waitTime)
         r_distance = self._get_consistent_distance()
         print("Distance r: {}".format(r_distance))
 
         self.motor_neck.run_angle(200, 115)
-        wait(500)
+        wait(waitTime)
         m_distance = self._get_consistent_distance()
         print("Distance m: {}".format(m_distance))
 
@@ -172,20 +173,20 @@ class RobotController:
 
         if scan_result.get("distance_r") < 140:
             self.turn_left()
-            wait(1000)
+            wait(waitTime)
             self.align_backwards()
             if next_instruction != "turn_left":
-                wait(1000)
+                wait(waitTime)
                 self.turn_right()
             else:
                 self.skip_next_instruction = True
 
         elif scan_result.get("distance_l") < 140:
             self.turn_right()
-            wait(1000)
+            wait(waitTime)
             self.align_backwards()
             if next_instruction != "turn_right":
-                wait(1000)
+                wait(waitTime)
                 self.turn_left()
             else:
                 self.skip_next_instruction = True
@@ -213,4 +214,4 @@ class RobotController:
             elif instruction == "turn_right":
                 self.turn_right()
 
-            wait(1000)
+            wait(waitTime)
